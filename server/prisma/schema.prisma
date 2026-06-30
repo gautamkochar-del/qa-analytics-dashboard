@@ -1,0 +1,201 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password     String
+  isActive     Boolean  @default(true)
+  departmentId Int?
+  teamId       Int?
+  roleId       Int?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  department   Department? @relation(fields: [departmentId], references: [id])
+  team         Team?       @relation(fields: [teamId], references: [id])
+  role         Role?       @relation(fields: [roleId], references: [id])
+
+  assignedBugs Bug[]
+  auditLogs    AuditLog[]
+  schedules    ReportSchedule[]
+  presets      FilterPreset[]
+  integrations Integration[]
+}
+
+model Project {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String?
+  status      String     @default("Active")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  testRuns    TestRun[]
+  bugs        Bug[]
+}
+
+model TestRun {
+  id            Int       @id @default(autoincrement())
+  projectId     Int
+  suiteName     String    @default("Default Suite")
+  environment   String    @default("QA")
+  status        String    @default("passed")
+  total         Int
+  passed        Int
+  failed        Int
+  skipped       Int       @default(0)
+  duration      Int       @default(0)
+  executionDate DateTime  @default(now())
+
+  jenkinsBuildUrl String? // Link to CI/CD build logs
+  githubRunId     String? // GitHub Actions Run ID
+
+  project       Project   @relation(fields: [projectId], references: [id])
+
+  @@index([projectId, status, executionDate])
+}
+
+model Bug {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  severity    String
+  status      String
+  module      String   @default("General")
+  projectId   Int
+  assigneeId  Int?
+  jiraIssueKey String? // Reference to external Jira ticket
+  
+  project     Project  @relation(fields: [projectId], references: [id])
+  assignee    User?    @relation(fields: [assigneeId], references: [id])
+  createdAt   DateTime @default(now())
+
+  @@index([projectId, status, severity])
+}
+
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  action     String   // e.g., CREATE, UPDATE, DELETE
+  resource   String   // e.g., TestRun, Bug, Project
+  resourceId Int?     
+  details    String?  // JSON stringified details
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model ReportSchedule {
+  id         Int      @id @default(autoincrement())
+  name       String
+  frequency  String   // e.g., daily, weekly
+  recipients String   // JSON array of emails
+  creatorId  Int
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  creator    User     @relation(fields: [creatorId], references: [id])
+  histories  ReportHistory[]
+}
+
+model ReportHistory {
+  id         Int      @id @default(autoincrement())
+  scheduleId Int
+  status     String   // success, failed
+  summary    String?  // Summary of the run
+  createdAt  DateTime @default(now())
+
+  schedule   ReportSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+}
+
+model FilterPreset {
+  id           Int      @id @default(autoincrement())
+  name         String
+  userId       Int
+  resourceType String   // e.g., Bug, TestRun
+  filterData   String   // JSON representation of filters
+  createdAt    DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model Integration {
+  id          Int      @id @default(autoincrement())
+  provider    String   // Jira, GitHub, Jenkins
+  name        String   // Display name for the integration
+  url         String?  // Base URL (e.g., https://yourdomain.atlassian.net)
+  apiKey      String   // Encrypted API token
+  metadata    String?  // Additional config in JSON (e.g., Jira Project Key, Jenkins Job Name)
+  userId      Int      // User who configured this integration
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model Department {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  teams       Team[]
+  users       User[]
+}
+
+model Team {
+  id           Int      @id @default(autoincrement())
+  name         String
+  description  String?
+  departmentId Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  department   Department @relation(fields: [departmentId], references: [id])
+  users        User[]
+}
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique // e.g. Admin, QA Lead, Tester, Viewer
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users       User[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id          Int      @id @default(autoincrement())
+  action      String   // e.g. "create", "read", "update", "delete", "manage"
+  resource    String   // e.g. "TestRun", "Bug", "User", "Project", "all"
+  description String?
+
+  roles       RolePermission[]
+
+  @@unique([action, resource])
+}
+
+model RolePermission {
+  id           Int @id @default(autoincrement())
+  roleId       Int
+  permissionId Int
+
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+}
+
