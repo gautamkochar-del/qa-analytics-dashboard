@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  qadash-backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: qadash-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      # Use an internal SQLite volume for simple deployment, or swap for Postgres URL
+      - DATABASE_URL=file:/app/dev.db
+      - JWT_SECRET=production_super_secret_key_change_me
+    volumes:
+      - sqlite_data:/app
+
+  qadash-frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: qadash-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - qadash-backend
+
+volumes:
+  sqlite_data:

@@ -1,12 +1,17 @@
-import Layout from "../components/Layout/Layout";
-import DashboardContent from "../components/Dashboard/DashboardContent";
+import PassFailChart from "../components/Dashboard/PassFailChart";
+import ExecutionTrendChart from "../components/Dashboard/ExecutionTrendChart";
+import BugSeverityChart from "../components/Dashboard/BugSeverityChart";
 
-const Dashboard = () => {
-  return (
-    <Layout>
-      <DashboardContent />
-    </Layout>
-  );
-};
+<Grid container spacing={3} mt={2}>
+  <Grid size={{xs: 12, md: 6}}>
+    <PassFailChart />
+  </Grid>
 
-export default Dashboard;
+  <Grid size={{xs: 12, md: 6}}>
+    <BugSeverityChart />
+  </Grid>
+
+  <Grid size={12}>
+    <ExecutionTrendChart />
+  </Grid>
+</Grid>

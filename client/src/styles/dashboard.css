@@ -1614,3 +1614,7 @@ table tbody tr:last-child td {
   0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
   50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
 }
+
+main {
+  color: var(--text-secondary);
+}

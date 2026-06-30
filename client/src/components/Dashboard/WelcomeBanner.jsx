@@ -1,18 +1,19 @@
-const WelcomeBanner = () => {
-  return (
-    <div
-      style={{
-        background: "#2563eb",
-        color: "#fff",
-        padding: "24px",
-        borderRadius: "10px",
-        marginBottom: "24px",
-      }}
-    >
-      <h1>Welcome back, Gautam 👋</h1>
-      <p>Here's today's QA Analytics summary.</p>
-    </div>
-  );
-};
+import {
+  Paper, Typography, } from "@mui/material";
 
-export default WelcomeBanner;
+export default function WelcomeBanner() {
+  return (
+    <Paper
+      sx={{
+        mb: 4, p: 4, bgcolor: "primary.main", color: "white", }}
+    >
+      <Typography variant="h4">
+        Welcome Gautam 👋
+      </Typography>
+
+      <Typography>
+        QA Automation Dashboard
+      </Typography>
+    </Paper>
+  );
+}

@@ -1,26 +1,29 @@
-const StatCard = ({ title, value, color }) => {
+import {
+  Card, CardContent, Typography, } from "@mui/material";
+
+export default function StatCard({
+  title, value, color, }) {
   return (
-    <div
-      style={{
-        background: "#fff",
-        borderRadius: "12px",
-        padding: "25px",
-        borderTop: `5px solid ${color}`,
-        boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
-      }}
+    <Card
+      sx={{
+        borderTop: `6px solid ${color}`, }}
     >
-      <h4
-        style={{
-          color: "#666",
-          marginBottom: "10px",
-        }}
-      >
-        {title}
-      </h4>
+      <CardContent>
 
-      <h1>{value}</h1>
-    </div>
+        <Typography
+          color="text.secondary"
+        >
+          {title}
+        </Typography>
+
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+        >
+          {value}
+        </Typography>
+
+      </CardContent>
+    </Card>
   );
-};
-
-export default StatCard;
+}

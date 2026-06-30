@@ -5,24 +5,19 @@ const Layout = ({ children }) => {
   return (
     <div
       style={{
-        display: "flex",
-        background: "#f5f7fb",
-      }}
+        display: "flex", background: "#f5f7fb", }}
     >
       <Sidebar />
 
       <div
         style={{
-          flex: 1,
-          minHeight: "100vh",
-        }}
+          flex: 1, minHeight: "100vh", }}
       >
         <Navbar />
 
         <div
           style={{
-            padding: "30px",
-          }}
+            padding: "30px", }}
         >
           {children}
         </div>
