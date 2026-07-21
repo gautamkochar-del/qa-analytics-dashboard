@@ -2,6 +2,7 @@ import cron from "node-cron";
 import prisma from "../config/prisma.js";
 import { sendReportEmail } from "./emailService.js";
 import { getDashboardSummary } from "./dashboardService.js";
+import { syncAllBugsFromJira } from "./jiraService.js";
 import PDFDocument from "pdfkit";
 import ExcelJS from "exceljs";
 
@@ -22,6 +23,12 @@ export const initCronJobs = () => {
   cron.schedule("0 8 1 * *", async () => {
     console.log("Running scheduled reports job (Monthly)");
     await processSchedules("monthly");
+  });
+
+  // Sync Jira bugs every hour
+  cron.schedule("0 * * * *", async () => {
+    console.log("Running automated Jira Sync");
+    await syncAllBugsFromJira();
   });
 };
 

@@ -14,6 +14,7 @@ export default function useReports() {
   const [projectSummary, setProjectSummary] = useState([]);
   const [executionTrend, setExecutionTrend] = useState([]);
   const [bugTrend, setBugTrend] = useState([]);
+  const [allProjectsList, setAllProjectsList] = useState([]);
   const [filters, setFilters] = useState({
     project: "",
     status: "",
@@ -50,13 +51,15 @@ export default function useReports() {
         to: debouncedFilters.to || undefined,
       };
 
-      const [summaryObj, passFail, severity, projects, execution, bugs] = await Promise.all([
+      const [summaryObj, passFail, severity, projects, execution, bugs, fullProjects] = await Promise.all([
         reportApi.getSummary(params),
         reportApi.getPassFailChart(params),
         reportApi.getBugSeverityChart(params),
         reportApi.getProjectSummary(params),
         reportApi.getExecutionTrend(params),
         reportApi.getBugTrend(params),
+        // Fetch full project list if empty
+        allProjectsList.length === 0 ? reportApi.getProjectSummary({}) : Promise.resolve(allProjectsList),
       ]);
 
       setSummary(summaryObj);
@@ -65,6 +68,7 @@ export default function useReports() {
       setProjectSummary(projects);
       setExecutionTrend(execution);
       setBugTrend(bugs);
+      if (allProjectsList.length === 0) setAllProjectsList(fullProjects);
 
       setError("");
     } catch (err) {
@@ -84,6 +88,7 @@ export default function useReports() {
     chartData,
     severityData,
 
+    allProjectsList,
     projectSummary,
     filteredProjectSummary: projectSummary,
     filteredExecutionTrend: executionTrend,

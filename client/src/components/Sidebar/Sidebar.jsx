@@ -13,6 +13,12 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import SecurityIcon from "@mui/icons-material/Security";
 import IntegrationInstructionsIcon from "@mui/icons-material/IntegrationInstructions";
 import AccountTreeIcon from "@mui/icons-material/AccountTree";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
+import ViewKanbanIcon from "@mui/icons-material/ViewKanban";
+import NetworkCheckIcon from "@mui/icons-material/NetworkCheck";
+import GroupsIcon from "@mui/icons-material/Groups";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 
 import { useAppTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
@@ -23,7 +29,22 @@ export default function Sidebar() {
   const theme = useTheme();
 
   const menuItems = [
-    { name: "Dashboard", path: "/", icon: <DashboardIcon fontSize="small" /> }, { name: "Projects", path: "/projects", icon: <FolderIcon fontSize="small" /> }, { name: "Test Runs", path: "/tests", icon: <PlaylistPlayIcon fontSize="small" /> }, { name: "Bugs", path: "/bugs", icon: <BugReportIcon fontSize="small" /> }, { name: "Analytics", path: "/analytics", icon: <AnalyticsIcon fontSize="small" /> }, { name: "Reports", path: "/reports", icon: <AssessmentIcon fontSize="small" /> }, { name: "CI/CD", path: "/cicd", icon: <AccountTreeIcon fontSize="small" /> }, { name: "Settings", path: "/settings", icon: <SettingsIcon fontSize="small" /> }, ];
+    { name: "Dashboard", path: "/", icon: <DashboardIcon fontSize="small" /> }, 
+    { name: "Projects", path: "/projects", icon: <FolderIcon fontSize="small" /> }, 
+    { name: "Test Runs", path: "/tests", icon: <PlaylistPlayIcon fontSize="small" /> }, 
+    { name: "Test Cases", path: "/test-cases", icon: <AssignmentIcon fontSize="small" /> },
+    { name: "Sprint Board", path: "/sprint-board", icon: <ViewKanbanIcon fontSize="small" /> },
+    { name: "Releases", path: "/releases", icon: <RocketLaunchIcon fontSize="small" /> },
+    { name: "Bugs", path: "/bugs", icon: <BugReportIcon fontSize="small" /> }, 
+    { name: "Analytics", path: "/analytics", icon: <AnalyticsIcon fontSize="small" /> }, 
+    { name: "Reports", path: "/reports", icon: <AssessmentIcon fontSize="small" /> }, 
+    { name: "API Monitoring", path: "/api-monitoring", icon: <NetworkCheckIcon fontSize="small" /> },
+    { name: "Jira Sync", path: "/jira", icon: <IntegrationInstructionsIcon fontSize="small" /> },
+    { name: "Teams", path: "/teams", icon: <GroupsIcon fontSize="small" /> },
+    { name: "CI/CD", path: "/cicd", icon: <AccountTreeIcon fontSize="small" /> }, 
+    { name: "GitHub", path: "/github", icon: <AccountTreeIcon fontSize="small" /> }, 
+    { name: "Settings", path: "/settings", icon: <SettingsIcon fontSize="small" /> }, 
+  ];
 
   if (user?.role === "Admin") {
     menuItems.push({ name: "Audit Logs", path: "/audit-logs", icon: <SecurityIcon fontSize="small" /> });
@@ -35,7 +56,7 @@ export default function Sidebar() {
     <Box
       component="aside"
       sx={{
-        width: 250, bgcolor: mode === "light" ? "background.paper" : "#0f172a", color: "text.primary", minHeight: "100vh", display: "flex", flexDirection: "column", borderRight: `1px solid ${theme.palette.divider}`, padding: "25px 20px", }}
+        width: 260, bgcolor: mode === "light" ? "background.paper" : "#0f172a", color: "text.primary", minHeight: "100vh", display: "flex", flexDirection: "column", borderRight: `1px solid ${theme.palette.divider}`, padding: "25px 20px", }}
     >
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}>
         <Typography variant="h5" color="primary" sx={{ fontWeight: 850, letterSpacing: "-0.03em" }}>

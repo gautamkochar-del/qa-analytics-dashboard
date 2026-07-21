@@ -171,6 +171,12 @@ export default function UserManagement() {
             rows={users}
             columns={columns}
             disableRowSelectionOnClick
+            onRowClick={(params) => handleOpenForm(params.row)}
+            sx={{
+              "& .MuiDataGrid-row": {
+                cursor: "pointer",
+              },
+            }}
             pageSizeOptions={[10, 25, 50]}
             initialState={{
               pagination: { paginationModel: { pageSize: 10 } },

@@ -14,8 +14,10 @@ import DeleteDialog from "../components/Common/DeleteDialog";
 
 import * as bugApi from "../api/bugApi";
 import * as integrationApi from "../api/integrationApi";
+import * as jiraApi from "../api/jiraApi";
 import { useAppSnackbar } from "../context/SnackbarContext";
 import { useSocket } from "../context/SocketContext";
+import SyncIcon from "@mui/icons-material/Sync";
 
 export default function Bugs() {
   const {
@@ -31,6 +33,7 @@ export default function Bugs() {
   const [bugToDelete, setBugToDelete] = useState(null);
 
   const [jiraUrl, setJiraUrl] = useState("");
+  const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
     const fetchIntegrations = async () => {
@@ -118,6 +121,31 @@ export default function Bugs() {
     setSortOrder(order);
   }, [setSortBy, setSortOrder]);
 
+  const handleJiraSync = async () => {
+    try {
+      setSyncing(true);
+      const res = await jiraApi.syncBugs();
+      showSnackbar(res.message, "success");
+      refreshBugs();
+    } catch (err) {
+      console.error(err);
+      showSnackbar(err.response?.data?.message || "Failed to sync Jira bugs", "error");
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const handlePushToJira = async (bug) => {
+    try {
+      const res = await jiraApi.createIssue(bug.id);
+      showSnackbar(res.message, "success");
+      refreshBugs();
+    } catch (err) {
+      console.error(err);
+      showSnackbar(err.response?.data?.message || "Failed to push to Jira", "error");
+    }
+  };
+
   return (
     <Box>
       <Box
@@ -129,6 +157,15 @@ export default function Bugs() {
         </Typography>
 
         <Box sx={{ display: "flex", gap: 1 }}>
+          <Button
+            variant="outlined"
+            startIcon={<SyncIcon />}
+            onClick={handleJiraSync}
+            disabled={!jiraUrl || syncing}
+            sx={{ borderRadius: 2 }}
+          >
+            {syncing ? "Syncing..." : "Sync Jira"}
+          </Button>
           <IconButton onClick={refreshBugs} title="Refresh Data">
             <RefreshIcon />
           </IconButton>
@@ -230,6 +267,7 @@ export default function Bugs() {
             bugs={bugs}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onPushToJira={handlePushToJira}
             sortBy={sortBy}
             sortOrder={sortOrder}
             onSort={handleSort}

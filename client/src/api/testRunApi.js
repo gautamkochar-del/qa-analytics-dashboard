@@ -5,6 +5,11 @@ export const getTestRuns = async (params = {}) => {
   return data;
 };
 
+export const getTestRun = async (id) => {
+  const { data } = await api.get(`/test-runs/${id}`);
+  return data;
+};
+
 export const createTestRun = async (testRunData) => {
   const { data } = await api.post("/test-runs", testRunData);
   return data;

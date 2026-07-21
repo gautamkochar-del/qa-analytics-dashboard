@@ -5,6 +5,9 @@ import { auditLog } from "../middleware/auditMiddleware.js";
 
 const router = express.Router();
 
+// Profile route accessible by all authenticated users
+router.get("/:id/profile", userController.getUserProfile);
+
 // All user management routes require Admin privileges
 router.use(authorizeRoles("Admin"));
 

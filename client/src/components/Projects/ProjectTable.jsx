@@ -41,6 +41,12 @@ export default function ProjectTable({
         rows={projects}
         columns={columns(onEdit, onDelete)}
         pageSizeOptions={[5, 10]}
+        onRowClick={(params) => onEdit(params.row)}
+        sx={{
+          "& .MuiDataGrid-row": {
+            cursor: "pointer",
+          },
+        }}
       />
     </Paper>
   );

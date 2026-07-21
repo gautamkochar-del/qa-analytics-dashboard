@@ -43,13 +43,35 @@ export const ThemeProvider = ({ children }) => {
             fontWeight: 700, letterSpacing: "-0.02em", }, h6: {
             fontWeight: 600, letterSpacing: "-0.01em", }, button: {
             textTransform: "none", fontWeight: 500, }, }, shape: {
-          borderRadius: 12, }, components: {
+          borderRadius: 20, }, components: {
           MuiPaper: {
             styleOverrides: {
               root: {
-                backgroundImage: "none", boxShadow: mode === "light"
-                    ? "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)"
-                    : "0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px -1px rgba(0, 0, 0, 0.3)", border: mode === "light" ? "1px solid #e2e8f0" : "1px solid #334155", }, }, }, MuiButton: {
+                backgroundImage: "none", 
+                backgroundColor: mode === "light" ? "rgba(255, 255, 255, 0.8)" : "rgba(30, 41, 59, 0.8)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                boxShadow: mode === "light"
+                    ? "0 8px 32px 0 rgba(0, 0, 0, 0.05)"
+                    : "0 8px 32px 0 rgba(0, 0, 0, 0.3)", 
+                border: mode === "light" ? "1px solid rgba(255, 255, 255, 0.6)" : "1px solid rgba(255, 255, 255, 0.1)", 
+                transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+              }, 
+            }, 
+          }, 
+          MuiCard: {
+            styleOverrides: {
+              root: {
+                "&:hover": {
+                  transform: "translateY(-4px)",
+                  boxShadow: mode === "light"
+                    ? "0 12px 48px 0 rgba(0, 0, 0, 0.12)"
+                    : "0 12px 48px 0 rgba(0, 0, 0, 0.5)",
+                }
+              }
+            }
+          },
+          MuiButton: {
             styleOverrides: {
               contained: {
                 boxShadow: "none", "&:hover": {

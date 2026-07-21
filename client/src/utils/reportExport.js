@@ -1,4 +1,4 @@
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
@@ -13,12 +13,11 @@ export const exportPDF = (summary, projects) => {
 
   doc.setFontSize(12);
 
-  doc.text(`Projects: ${summary.projects}`, 14, 35);
-  doc.text(`Active Projects: ${summary.activeProjects}`, 14, 43);
-  doc.text(`Test Runs: ${summary.testRuns}`, 14, 51);
-  doc.text(`Passed Tests: ${summary.passed}`, 14, 59);
-  doc.text(`Failed Tests: ${summary.failed}`, 14, 67);
-  doc.text(`Open Bugs: ${summary.openBugs}`, 14, 75);
+  doc.text(`Projects: ${summary?.totalProjects ?? 0}`, 14, 30);
+  doc.text(`Test Runs: ${summary?.totalTestRuns ?? 0}`, 14, 40);
+  doc.text(`Passed Tests: ${summary?.passed ?? 0}`, 14, 50);
+  doc.text(`Failed Tests: ${summary?.failed ?? 0}`, 14, 60);
+  doc.text(`Open Bugs: ${summary?.openBugs ?? 0}`, 14, 70);
 
   autoTable(doc, {
     startY: 90,
@@ -30,14 +29,14 @@ export const exportPDF = (summary, projects) => {
       "Pass %",
       "Open Bugs",
     ]],
-    body: projects.map((p) => [
-	  p.name,
-	  p.total,
-	  p.passed,
-	  p.failed,
-	  `${p.passRate}%`,
-	  p.openBugs,
-	]),
+    body: projects.map(project => [
+    project.project,
+    project.totalTests,
+    project.passed,
+    project.failed,
+    `${project.passRate}%`,
+    project.openBugs,
+]),
   });
 
   doc.save("QA_Report.pdf");
@@ -47,8 +46,8 @@ export const exportPDF = (summary, projects) => {
 
 export const exportExcel = (projects) => {
   const data = projects.map((p) => ({
-    Project: p.name,
-    "Total Tests": p.total,
+    Project: p.project,
+    "Total Tests": p.totalTests,
     Passed: p.passed,
     Failed: p.failed,
     "Pass %": p.passRate,
@@ -80,8 +79,8 @@ export const exportExcel = (projects) => {
 
 export const exportCSV = (projects) => {
   const data = projects.map((p) => ({
-    Project: p.name,
-    "Total Tests": p.total,
+    Project: p.project,
+    "Total Tests": p.totalTests,
     Passed: p.passed,
     Failed: p.failed,
     "Pass %": p.passRate,
