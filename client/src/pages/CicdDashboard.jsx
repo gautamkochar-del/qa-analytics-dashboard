@@ -1,176 +1,186 @@
-import { useState, useEffect } from "react";
-import {
-  Box, Typography, Paper, Grid, Card, CardContent, Chip, CircularProgress, List, ListItem, ListItemText, ListItemIcon, Divider, } from "@mui/material";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ErrorIcon from "@mui/icons-material/Error";
-import * as integrationApi from "../api/integrationApi";
-import useTestRuns from "../hooks/useTestRuns";
-import { useSocket } from "../context/SocketContext";
+import { useEffect, useState } from "react";
+import { Box, Typography, Grid, MenuItem, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Button, CircularProgress } from "@mui/material";
+import useJenkins from "../hooks/useJenkins";
+import BuildCard from "../components/CICD/BuildCard";
+import PipelineStatus from "../components/CICD/PipelineStatus";
+import PipelineTimeline from "../components/CICD/PipelineTimeline";
+import BuildHistory from "../components/CICD/BuildHistory";
+import PipelineGraph from "../components/CICD/PipelineGraph";
 
 export default function CicdDashboard() {
-  const [integrations, setIntegrations] = useState([]);
-  const [loadingInts, setLoadingInts] = useState(true);
+  const {
+    status,
+    jobs,
+    builds,
+    loading,
+    checkStatus,
+    fetchJobs,
+    fetchBuilds,
+    triggerJob,
+    getBuildLog,
+    getFailedStage
+  } = useJenkins();
 
-  // We reuse our existing test runs hook to simulate pipeline status
-  // since test runs represent executed suites which often run in CI
-  const { testRuns, loading: loadingRuns, refreshTestRuns } = useTestRuns({ limit: 5 });
+  const [selectedJob, setSelectedJob] = useState("");
+  const [logDialogOpen, setLogDialogOpen] = useState(false);
+  const [activeLog, setActiveLog] = useState("");
+  const [loadingLog, setLoadingLog] = useState(false);
+  const [failedStageData, setFailedStageData] = useState(null);
 
   useEffect(() => {
-    const fetchIntegrations = async () => {
-      try {
-        const data = await integrationApi.getIntegrations();
-        setIntegrations(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoadingInts(false);
+    checkStatus();
+  }, [checkStatus]);
+
+  useEffect(() => {
+    if (status?.isConnected) {
+      fetchJobs();
+    }
+  }, [status?.isConnected, fetchJobs]);
+
+  useEffect(() => {
+    if (selectedJob) {
+      fetchBuilds(selectedJob);
+    }
+  }, [selectedJob, fetchBuilds]);
+
+  // When builds load, try to fetch the failed stage for the latest build if it failed
+  useEffect(() => {
+    const checkFailedStage = async () => {
+      const jobBuilds = builds[selectedJob];
+      if (jobBuilds && jobBuilds.length > 0) {
+        const latestBuild = jobBuilds[0];
+        if (latestBuild.status === "FAILURE") {
+          const stage = await getFailedStage(selectedJob, latestBuild.number);
+          setFailedStageData(stage);
+        } else {
+          setFailedStageData(null);
+        }
       }
     };
-    fetchIntegrations();
-  }, []);
+    checkFailedStage();
+  }, [builds, selectedJob, getFailedStage]);
 
-  const socket = useSocket();
+  const handleViewLog = async (jobName, buildNumber) => {
+    setLogDialogOpen(true);
+    setLoadingLog(true);
+    const log = await getBuildLog(jobName, buildNumber);
+    setActiveLog(log);
+    setLoadingLog(false);
+  };
 
-  useEffect(() => {
-    if (!socket) return;
-    const handleUpdate = (data) => {
-      if (data?.type === "testRun") refreshTestRuns();
-    };
-    socket.on("dashboardUpdate", handleUpdate);
-    return () => socket.off("dashboardUpdate", handleUpdate);
-  }, [socket, refreshTestRuns]);
+  const handleTrigger = (jobName) => {
+    triggerJob(jobName);
+  };
+
+  if (status && !status.isConnected) {
+    return (
+      <Box sx={{ p: 4, textAlign: "center" }}>
+        <Typography variant="h5" color="text.secondary">
+          Jenkins is not connected.
+        </Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
+          Please go to the Integrations Settings to connect your Jenkins CI/CD pipeline.
+        </Typography>
+      </Box>
+    );
+  }
+
+  const jobDetails = jobs.find(j => j.name === selectedJob);
+  const jobBuilds = builds[selectedJob] || [];
+  const latestBuild = jobBuilds[0];
 
   return (
     <Box>
-      <Box
-        sx={{
-          display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3, }}
-      >
-        <Typography variant="h4" sx={{ fontWeight: 700 }}>
-          CI/CD Pipelines
-        </Typography>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4, flexWrap: "wrap", gap: 2 }}>
+        <Box>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+            Live Build Dashboard
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Monitor, trigger, and analyze Jenkins CI/CD pipelines in real-time.
+          </Typography>
+        </Box>
+
+        <Box sx={{ minWidth: 250 }}>
+          <TextField
+            select
+            fullWidth
+            label="Select Jenkins Job"
+            value={selectedJob}
+            onChange={(e) => setSelectedJob(e.target.value)}
+            disabled={loading || jobs.length === 0}
+          >
+            {jobs.map((job) => (
+              <MenuItem key={job.name} value={job.name}>
+                {job.name}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Box>
       </Box>
 
-      <Grid container spacing={3}>
-        {/* Left column: Pipeline Status Feed */}
-        <Grid size={{xs: 12, md: 8}}>
-          <Paper sx={{ p: 3, borderRadius: 3, height: "100%" }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
-              Recent Builds & Executions
-            </Typography>
+      {selectedJob && (
+        <>
+          <Grid container spacing={3}>
+            <Grid size={{xs: 12, lg: 8}}>
+              <BuildCard 
+                job={jobDetails} 
+                latestBuild={latestBuild} 
+                onTrigger={handleTrigger}
+                onViewLog={handleViewLog}
+              />
+              <PipelineGraph 
+                failedStage={failedStageData} 
+                latestBuildStatus={latestBuild?.status} 
+              />
+            </Grid>
 
-            {loadingRuns ? (
-              <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
-                <CircularProgress />
-              </Box>
-            ) : (
-              <List>
-                {testRuns.map((run, index) => (
-                  <div key={run.id}>
-                    <ListItem alignItems="flex-start" sx={{ px: 0, py: 2 }}>
-                      <ListItemIcon>
-                        {run.status === "passed" ? (
-                          <CheckCircleIcon color="success" />
-                        ) : run.status === "failed" ? (
-                          <ErrorIcon color="error" />
-                        ) : (
-                          <PlayArrowIcon color="primary" />
-                        )}
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={
-                          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                            <Typography variant="subtitle1" fontWeight={600}>
-                              {run.suiteName}
-                            </Typography>
-                            <Chip
-                              label={run.environment}
-                              size="small"
-                              variant="outlined"
-                              sx={{ height: 20, fontSize: "0.7rem" }}
-                            />
-                            {run.githubRunId && (
-                              <Chip
-                                label={`GitHub #${run.githubRunId}`}
-                                size="small"
-                                sx={{ height: 20, fontSize: "0.7rem", bgcolor: "#24292e", color: "white" }}
-                              />
-                            )}
-                            {run.jenkinsBuildUrl && (
-                              <Chip
-                                label={`Jenkins Build`}
-                                size="small"
-                                sx={{ height: 20, fontSize: "0.7rem", bgcolor: "#d32f2f", color: "white" }}
-                              />
-                            )}
-                          </Box>
-                        }
-                        secondary={
-                          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                            Executed on {new Date(run.executionDate).toLocaleString()} in Project: {run.project?.name}
-                            <br />
-                            Total Tests: {run.total} | Passed: {run.passed} | Failed: {run.failed}
-                          </Typography>
-                        }
-                      />
-                    </ListItem>
-                    {index < testRuns.length - 1 && <Divider component="li" />}
-                  </div>
-                ))}
-              </List>
-            )}
-          </Paper>
-        </Grid>
+            <Grid size={{xs: 12, lg: 4}}>
+              <PipelineStatus builds={jobBuilds} />
+              <PipelineTimeline 
+                failedStage={failedStageData} 
+                latestBuildStatus={latestBuild?.status}
+              />
+            </Grid>
 
-        {/* Right column: Active Integrations */}
-        <Grid size={{xs: 12, md: 4}}>
-          <Paper sx={{ p: 3, borderRadius: 3, height: "100%" }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
-              Active Connections
-            </Typography>
+            <Grid size={{xs: 12}}>
+              <BuildHistory builds={jobBuilds} loading={loading} />
+            </Grid>
+          </Grid>
+        </>
+      )}
 
-            {loadingInts ? (
-              <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
-                <CircularProgress size={24} />
-              </Box>
-            ) : integrations.length === 0 ? (
-              <Typography variant="body2" color="text.secondary">
-                No integrations configured. Set them up in the Integrations page.
-              </Typography>
-            ) : (
-              <Grid container spacing={2}>
-                {integrations.map((int) => (
-                  <Grid size={12} key={int.id}>
-                    <Card variant="outlined" sx={{ borderRadius: 2 }}>
-                      <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
-                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <Typography variant="subtitle2" fontWeight={600}>
-                            {int.name}
-                          </Typography>
-                          <Chip
-                            label={int.provider}
-                            size="small"
-                            color={int.provider === "Jira" ? "primary" : int.provider === "Jenkins" ? "warning" : "default"}
-                          />
-                        </Box>
-                        {int.url && (
-                          <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: "block" }}>
-                            {int.url}
-                          </Typography>
-                        )}
-                        <Typography variant="caption" color="success.main" sx={{ mt: 0.5, display: "block", fontWeight: 600 }}>
-                          ● Connected
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
-            )}
-          </Paper>
-        </Grid>
-      </Grid>
+      {!selectedJob && jobs.length > 0 && (
+        <Box sx={{ p: 6, textAlign: "center", bgcolor: "background.paper", borderRadius: 3 }}>
+          <Typography variant="h6" color="text.secondary">
+            Select a Jenkins job from the dropdown to view its live dashboard.
+          </Typography>
+        </Box>
+      )}
+
+      {/* Console Log Dialog */}
+      <Dialog 
+        open={logDialogOpen} 
+        onClose={() => setLogDialogOpen(false)}
+        maxWidth="lg"
+        fullWidth
+      >
+        <DialogTitle sx={{ fontWeight: 700 }}>Console Output</DialogTitle>
+        <DialogContent dividers sx={{ bgcolor: "#1e1e1e", color: "#d4d4d4", fontFamily: "monospace", p: 3 }}>
+          {loadingLog ? (
+            <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+              <CircularProgress color="inherit" />
+            </Box>
+          ) : (
+            <pre style={{ margin: 0, whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
+              {activeLog || "No logs available."}
+            </pre>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setLogDialogOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

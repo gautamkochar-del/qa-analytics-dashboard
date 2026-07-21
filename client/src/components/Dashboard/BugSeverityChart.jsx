@@ -8,9 +8,9 @@ export default function BugSeverityChart({ data }) {
   if (!data || data.length === 0) return null;
 
   return (
-    <Card>
+    <Card sx={{ borderRadius: 3, boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.05)' }}>
       <CardContent>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
           Bug Severity
         </Typography>
 

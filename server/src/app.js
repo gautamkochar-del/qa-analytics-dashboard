@@ -18,6 +18,14 @@ import importRoutes from "./routes/importRoutes.js";
 import webhookRoutes from "./routes/webhookRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import githubRoutes from "./modules/github/github.routes.js";
+import githubWorkflowRoutes from "./routes/githubWorkflowRoutes.js";
+import cicdRoutes from "./modules/cicd/cicd.routes.js";
+import testResultRoutes from "./modules/testResults/testResult.routes.js";
+import jiraRoutes from "./routes/jiraRoutes.js";
+import jenkinsRoutes from "./routes/jenkinsRoutes.js";
+import teamRoutes from "./routes/teamRoutes.js";
+import sprint3Routes from "./routes/sprint3Routes.js";
 
 import { protect } from "./middleware/authMiddleware.js";
 
@@ -64,6 +72,16 @@ app.use("/api/import", importRoutes); // Protect is applied in the route itself
 app.use("/api/webhooks", webhookRoutes); // Public endpoints, validated via apiKey query param
 app.use("/api/users", protect, userRoutes);
 app.use("/api/admin", protect, adminRoutes);
+app.use("/api/github", protect, githubWorkflowRoutes);
+app.use("/api/github", protect, githubRoutes);
+app.use("/api/cicd", protect, cicdRoutes);
+app.use("/api/test-results", protect, testResultRoutes);
+app.use("/api/jira", protect, jiraRoutes);
+app.use("/api/jenkins", protect, jenkinsRoutes);
+app.use("/api/teams", protect, teamRoutes);
+
+// Sprint 3 New Routes
+app.use("/api", sprint3Routes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {

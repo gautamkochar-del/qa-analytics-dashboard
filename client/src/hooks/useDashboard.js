@@ -51,8 +51,44 @@ export default function useDashboard() {
       queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     };
 
+    const handleLiveEvent = (event) => {
+      queryClient.setQueryData(["dashboard"], (oldData) => {
+        if (!oldData) return oldData;
+        let newData = { ...oldData };
+        
+        if (event.type === 'testrun') {
+          const newRun = {
+            id: Date.now(),
+            project: event.project || "QA Dashboard",
+            passRate: event.status === 'PASSED' ? 100 : (event.status === 'FAILED' ? 0 : 50),
+            executionDate: new Date().toISOString(),
+          };
+          newData.recentRuns = [newRun, ...newData.recentRuns].slice(0, 5);
+        }
+        
+        if (event.type === 'bug') {
+          const newBug = {
+            id: Date.now(),
+            title: event.title || 'New Bug',
+            project: event.project || "QA Dashboard",
+            severity: event.severity || 'High',
+            status: 'Open',
+            assignee: 'Unassigned',
+          };
+          newData.recentBugs = [newBug, ...newData.recentBugs].slice(0, 5);
+        }
+
+        return newData;
+      });
+    };
+
     socket.on("dashboardUpdate", handleDashboardUpdate);
-    return () => socket.off("dashboardUpdate", handleDashboardUpdate);
+    socket.on("liveEvent", handleLiveEvent);
+    
+    return () => {
+      socket.off("dashboardUpdate", handleDashboardUpdate);
+      socket.off("liveEvent", handleLiveEvent);
+    };
   }, [socket, queryClient]);
 
   return {

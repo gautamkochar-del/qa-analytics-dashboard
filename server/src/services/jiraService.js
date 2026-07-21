@@ -118,3 +118,76 @@ export const syncUpdateBug = async (bug) => {
     console.error("Jira Sync Error (Update):", error);
   }
 };
+
+export const syncAllBugsFromJira = async () => {
+  try {
+    const config = await getJiraConfig();
+    if (!config || !config.url) return 0;
+    
+    let authString = config.apiKey;
+    if (!authString.includes(":") && config.username) {
+      authString = `${config.username}:${config.apiKey}`;
+    }
+
+    const jql = config.projectKey ? `project=${config.projectKey} AND issuetype=Bug` : `issuetype=Bug`;
+    const response = await fetch(`${config.url}/rest/api/2/search?jql=${encodeURIComponent(jql)}&maxResults=50&fields=summary,description,status,priority,assignee`, {
+      headers: {
+        'Authorization': `Basic ${Buffer.from(authString).toString('base64')}`,
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      console.error("Failed to fetch Jira issues for cron sync.");
+      return 0;
+    }
+
+    const data = await response.json();
+    const issues = data.issues || [];
+    
+    const defaultProject = await prisma.project.findFirst();
+    if (!defaultProject) return 0;
+
+    let syncedCount = 0;
+    for (const issue of issues) {
+      const jiraKey = issue.key;
+      const title = issue.fields.summary;
+      const desc = issue.fields.description || "";
+      const statusName = issue.fields.status?.name || "Open";
+      
+      let localStatus = "Open";
+      if (statusName.toLowerCase().includes("progress")) localStatus = "In Progress";
+      if (statusName.toLowerCase().includes("done") || statusName.toLowerCase().includes("resolv")) localStatus = "Resolved";
+      if (statusName.toLowerCase().includes("clos")) localStatus = "Closed";
+
+      const priorityName = issue.fields.priority?.name || "Medium";
+      let localSeverity = "Medium";
+      if (priorityName.toLowerCase().includes("high") || priorityName.toLowerCase().includes("crit")) localSeverity = "High";
+      if (priorityName.toLowerCase().includes("low") || priorityName.toLowerCase().includes("minor")) localSeverity = "Low";
+
+      const existingBug = await prisma.bug.findFirst({
+        where: { jiraIssueKey: jiraKey },
+      });
+
+      if (existingBug) {
+        await prisma.bug.update({
+          where: { id: existingBug.id },
+          data: { title, description: desc, status: localStatus, severity: localSeverity },
+        });
+      } else {
+        await prisma.bug.create({
+          data: {
+            title, description: desc, status: localStatus, severity: localSeverity,
+            projectId: defaultProject.id, jiraIssueKey: jiraKey, module: "Synced from Jira",
+          },
+        });
+      }
+      syncedCount++;
+    }
+    console.log(`Cron: Synced ${syncedCount} bugs from Jira.`);
+    return syncedCount;
+  } catch (err) {
+    console.error("Cron Jira Sync Error:", err);
+    return 0;
+  }
+};

@@ -16,9 +16,11 @@ import {
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import SecurityIcon from "@mui/icons-material/Security";
-import SettingsInputComponentIcon from "@mui/icons-material/SettingsInputComponent";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
+import DashboardCustomizeIcon from "@mui/icons-material/DashboardCustomize";
+import HistoryIcon from '@mui/icons-material/History';
+import SettingsInputComponentIcon from "@mui/icons-material/SettingsInputComponent";
 import { useAppSnackbar } from "../context/SnackbarContext";
 
 function TabPanel(props) {
@@ -60,12 +62,20 @@ export default function Settings() {
     webhookUrl: "",
   });
 
+  const [dashboard, setDashboard] = useState({
+    defaultLanding: "/dashboard",
+    theme: "Light",
+    allowRearrange: true,
+    hiddenWidgets: ["AIInsights", "CalendarWidget"]
+  });
+
   const [security, setSecurity] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
     twoFactorAuth: false,
     sessionTimeout: "30",
+    passwordPolicy: "strict",
   });
 
   const handleTabChange = (event, newValue) => {
@@ -113,6 +123,7 @@ export default function Settings() {
             <Tab icon={<SettingsIcon />} iconPosition="start" label="General" />
             <Tab icon={<NotificationsIcon />} iconPosition="start" label="Notifications" />
             <Tab icon={<SettingsInputComponentIcon />} iconPosition="start" label="Integrations" />
+            <Tab icon={<DashboardCustomizeIcon />} iconPosition="start" label="Dashboard" />
             <Tab icon={<SecurityIcon />} iconPosition="start" label="Security" />
           </Tabs>
         </Box>
@@ -121,20 +132,7 @@ export default function Settings() {
           {/* General Tab */}
           <TabPanel value={tabIndex} index={0}>
             <Grid container spacing={4} maxWidth="md">
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  select
-                  fullWidth
-                  label="UI Theme"
-                  value={general.theme}
-                  onChange={(e) => setGeneral({ ...general, theme: e.target.value })}
-                >
-                  <MenuItem value="Light">Light Mode</MenuItem>
-                  <MenuItem value="Dark">Dark Mode</MenuItem>
-                  <MenuItem value="System">System Default</MenuItem>
-                </TextField>
-              </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{xs: 12, sm: 6}}>
                 <TextField
                   select
                   fullWidth
@@ -148,7 +146,7 @@ export default function Settings() {
                   <MenuItem value="Asia/Kolkata">IST (Indian Standard Time)</MenuItem>
                 </TextField>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{xs: 12, sm: 6}}>
                 <TextField
                   select
                   fullWidth
@@ -161,7 +159,7 @@ export default function Settings() {
                   <MenuItem value="YYYY-MM-DD">YYYY-MM-DD</MenuItem>
                 </TextField>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{xs: 12, sm: 6}}>
                 <TextField
                   fullWidth
                   label="Default Project Filter"
@@ -240,10 +238,52 @@ export default function Settings() {
             </Box>
           </TabPanel>
 
-          {/* Security Tab */}
+          {/* Dashboard Customization Tab */}
           <TabPanel value={tabIndex} index={3}>
             <Grid container spacing={4} maxWidth="md">
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12}>
+                <Typography variant="h6" gutterBottom>Display Preferences</Typography>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField select fullWidth label="UI Theme" value={dashboard.theme} onChange={(e) => setDashboard({ ...dashboard, theme: e.target.value })}>
+                  <MenuItem value="Light">Light Mode</MenuItem>
+                  <MenuItem value="Dark">Dark Mode</MenuItem>
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField select fullWidth label="Default Landing Page" value={dashboard.defaultLanding} onChange={(e) => setDashboard({ ...dashboard, defaultLanding: e.target.value })}>
+                  <MenuItem value="/dashboard">Main Dashboard</MenuItem>
+                  <MenuItem value="/executive">Executive Overview</MenuItem>
+                  <MenuItem value="/test-cases">Test Cases</MenuItem>
+                  <MenuItem value="/bugs">Defects & Bugs</MenuItem>
+                </TextField>
+              </Grid>
+              <Grid item xs={12}>
+                <Divider sx={{ my: 2 }} />
+                <Typography variant="h6" gutterBottom>Widget Configuration</Typography>
+                <FormGroup sx={{ mt: 2 }}>
+                  <FormControlLabel
+                    control={<Switch checked={dashboard.allowRearrange} onChange={(e) => setDashboard({ ...dashboard, allowRearrange: e.target.checked })} />}
+                    label="Enable Drag & Drop Widget Rearrangement"
+                  />
+                </FormGroup>
+                <TextField select fullWidth label="Hidden Widgets" SelectProps={{ multiple: true }} value={dashboard.hiddenWidgets} onChange={(e) => setDashboard({ ...dashboard, hiddenWidgets: e.target.value })} sx={{ mt: 3 }}>
+                  <MenuItem value="AIInsights">AI Insights</MenuItem>
+                  <MenuItem value="CalendarWidget">Calendar Widget</MenuItem>
+                  <MenuItem value="RecentRuns">Recent Runs</MenuItem>
+                  <MenuItem value="JenkinsWidget">Jenkins Status</MenuItem>
+                </TextField>
+                <Button variant="outlined" sx={{ mt: 3 }} onClick={() => showSnackbar("Layout saved securely", "success")}>
+                  Save Current Widget Layout
+                </Button>
+              </Grid>
+            </Grid>
+          </TabPanel>
+
+          {/* Security Tab */}
+          <TabPanel value={tabIndex} index={4}>
+            <Grid container spacing={4} maxWidth="md">
+              <Grid size={{xs: 12, md: 6}}>
                 <Typography variant="h6" gutterBottom>
                   Change Password
                 </Typography>
@@ -275,7 +315,7 @@ export default function Settings() {
                 </Box>
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid size={{xs: 12, md: 6}}>
                 <Typography variant="h6" gutterBottom>
                   Security Preferences
                 </Typography>
@@ -300,6 +340,30 @@ export default function Settings() {
                     <MenuItem value="60">1 Hour</MenuItem>
                     <MenuItem value="0">Never</MenuItem>
                   </TextField>
+
+                  <TextField select fullWidth label="Password Policy" value={security.passwordPolicy} onChange={(e) => setSecurity({ ...security, passwordPolicy: e.target.value })} sx={{ mt: 3 }}>
+                    <MenuItem value="standard">Standard (8 chars, 1 number)</MenuItem>
+                    <MenuItem value="strict">Strict (12 chars, upper, lower, number, special)</MenuItem>
+                  </TextField>
+                </Box>
+              </Grid>
+
+              <Grid size={12}>
+                <Divider sx={{ my: 3 }} />
+                <Typography variant="h6" gutterBottom>Advanced Security & Auditing</Typography>
+                <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 2 }}>
+                  <Button variant="outlined" startIcon={<HistoryIcon />} onClick={() => showSnackbar("Audit Logs exported", "info")}>
+                    View Audit History
+                  </Button>
+                  <Button variant="outlined" startIcon={<HistoryIcon />} onClick={() => showSnackbar("Login History exported", "info")}>
+                    View Login History
+                  </Button>
+                  <Button variant="contained" color="secondary" onClick={() => showSnackbar("API Token generated", "success")}>
+                    Manage API Tokens
+                  </Button>
+                  <Button variant="outlined" color="error" onClick={() => showSnackbar("Active sessions terminated", "success")}>
+                    Revoke All Active Sessions
+                  </Button>
                 </Box>
               </Grid>
             </Grid>

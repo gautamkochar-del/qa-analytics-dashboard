@@ -1,4 +1,5 @@
 import React from "react";
+import { Link as RouterLink } from "react-router-dom";
 import { IconButton, Chip, Typography, Box, Paper } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
@@ -15,7 +16,11 @@ const TestRunTable = ({
 
   
   const columns = [
-    { field: "suiteName", headerName: "Suite Name", flex: 1, minWidth: 150, renderCell: (params) => <Typography fontWeight={600}>{params.value || "-"}</Typography>, sortable: true },
+    { field: "suiteName", headerName: "Suite Name", flex: 1, minWidth: 150, renderCell: (params) => (
+      <Typography component={RouterLink} to={`/tests/${params.row.id}`} sx={{ fontWeight: 600, color: "primary.main", textDecoration: "none", "&:hover": { textDecoration: "underline" } }}>
+        {params.value || "-"}
+      </Typography>
+    ), sortable: true },
     { field: "project", headerName: "Project", flex: 1, minWidth: 150, valueGetter: (value, row) => row.project?.name || row.project || "-", sortable: false },
     { field: "environment", headerName: "Environment", flex: 1, minWidth: 120, renderCell: (params) => <Chip label={params.value || "-"} size="small" variant="outlined" />, sortable: false },
     { 
@@ -87,6 +92,12 @@ const TestRunTable = ({
         columns={columns}
         disableRowSelectionOnClick
         loading={loading}
+        onRowClick={(params) => onEdit(params.row)}
+        sx={{
+          "& .MuiDataGrid-row": {
+            cursor: "pointer",
+          },
+        }}
         rowCount={total}
         pageSizeOptions={[5, 10, 25, 50]}
         paginationMode="server"

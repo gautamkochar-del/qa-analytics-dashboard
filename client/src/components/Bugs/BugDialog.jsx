@@ -3,6 +3,9 @@ import {
 import { useEffect, useState } from "react";
 import useProjects from "../../hooks/useProjects";
 import api from "../../api/axios";
+import * as jiraApi from "../../api/jiraApi";
+import { Box, Typography, Chip, CircularProgress, Divider, Link } from "@mui/material";
+import SyncIcon from "@mui/icons-material/Sync";
 
 const modulesList = [
   "General", "Homepage", "Search", "Compare", "Car Details", "Dealer", "Finance", "User Auth", "API", ];
@@ -16,6 +19,8 @@ export default function BugDialog({
     title: "", description: "", severity: "Medium", status: "Open", projectId: "", module: "General", assigneeId: "", });
   
   const [errors, setErrors] = useState({});
+  const [jiraDetails, setJiraDetails] = useState(null);
+  const [loadingJira, setLoadingJira] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -35,9 +40,19 @@ export default function BugDialog({
     if (bug) {
       setForm({
         title: bug.title || "", description: bug.description || "", severity: bug.severity || "Medium", status: bug.status || "Open", projectId: bug.projectId || "", module: bug.module || "General", assigneeId: bug.assigneeId || "", });
+      if (bug.jiraIssueKey) {
+        setLoadingJira(true);
+        jiraApi.getIssueDetails(bug.id)
+          .then(data => setJiraDetails(data))
+          .catch(err => console.error("Failed to fetch Jira details", err))
+          .finally(() => setLoadingJira(false));
+      } else {
+        setJiraDetails(null);
+      }
     } else {
       setForm({
         title: "", description: "", severity: "Medium", status: "Open", projectId: "", module: "General", assigneeId: "", });
+      setJiraDetails(null);
     }
   }, [bug, open]);
 
@@ -200,6 +215,54 @@ export default function BugDialog({
               ))}
             </TextField>
           </Grid>
+
+          {bug?.jiraIssueKey && (
+            <Grid size={12} sx={{ mt: 1 }}>
+              <Divider sx={{ mb: 2 }} />
+              <Typography variant="subtitle2" color="primary" gutterBottom>
+                Live Jira Details ({bug.jiraIssueKey})
+              </Typography>
+              {loadingJira ? (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <CircularProgress size={16} /> <Typography variant="body2">Loading from Jira...</Typography>
+                </Box>
+              ) : jiraDetails ? (
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, bgcolor: 'background.default', p: 2, borderRadius: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body2" color="text.secondary">Status:</Typography>
+                    <Typography variant="body2" fontWeight={600}>{jiraDetails.status}</Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body2" color="text.secondary">Assignee:</Typography>
+                    <Typography variant="body2" fontWeight={600}>{jiraDetails.assignee}</Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body2" color="text.secondary">Priority:</Typography>
+                    <Typography variant="body2" fontWeight={600}>{jiraDetails.priority}</Typography>
+                  </Box>
+                  {jiraDetails.labels?.length > 0 && (
+                    <Box sx={{ display: 'flex', gap: 1, mt: 1, flexWrap: 'wrap' }}>
+                      {jiraDetails.labels.map(l => (
+                        <Chip key={l} label={l} size="small" variant="outlined" />
+                      ))}
+                    </Box>
+                  )}
+                  <Box sx={{ mt: 1, textAlign: 'right' }}>
+                    <Link href={jiraDetails.url} target="_blank" underline="hover" variant="body2">
+                      Open in Jira
+                    </Link>
+                  </Box>
+                  <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
+                    <Button variant="outlined" size="small" startIcon={<SyncIcon />}>Sync</Button>
+                    <Button variant="contained" size="small" color="primary">Transition Status</Button>
+                    <Button variant="outlined" size="small" color="error">Close Issue</Button>
+                  </Box>
+                </Box>
+              ) : (
+                <Typography variant="body2" color="error">Failed to load Jira details.</Typography>
+              )}
+            </Grid>
+          )}
         </Grid>
       </DialogContent>
 

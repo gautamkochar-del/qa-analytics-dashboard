@@ -15,6 +15,5 @@ router.post("/", ...importAuth, importController.importTestResults);
 // Specific integrations using file upload
 router.post("/playwright", ...importAuth, upload.single("file"), importController.importPlaywright);
 router.post("/cypress", ...importAuth, upload.single("file"), importController.importCypress);
-router.post("/junit", ...importAuth, upload.single("file"), importController.importJUnit);
 
 export default router;

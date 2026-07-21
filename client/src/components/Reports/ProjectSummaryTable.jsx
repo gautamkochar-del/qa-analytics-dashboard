@@ -2,7 +2,7 @@ import { Card, CardContent, Typography, Chip, Box } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 
 export default function ProjectSummaryTable({
-  projects = [], }) {
+  projects = [], onViewReport }) {
 
 console.log(projects);
 
@@ -38,6 +38,14 @@ console.log(projects);
               pagination: { paginationModel: { pageSize: 5 } },
             }}
             disableRowSelectionOnClick
+            onRowClick={(params) => {
+              if (onViewReport) onViewReport(params.row);
+            }}
+            sx={{
+              "& .MuiDataGrid-row": {
+                cursor: "pointer",
+              },
+            }}
             getRowId={(row) => row.id || row.project}
           />
         </Box>

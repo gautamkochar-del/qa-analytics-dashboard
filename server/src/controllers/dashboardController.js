@@ -71,3 +71,30 @@ export const getRecentActivity = async (req, res) => {
     res.status(500).json({ message: "Failed to load activity" });
   }
 };
+
+export const getNotifications = async (req, res) => {
+  try {
+    res.json(await dashboardService.getNotifications());
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to load notifications" });
+  }
+};
+
+export const getTeamActivity = async (req, res) => {
+  try {
+    res.json(await dashboardService.getTeamActivity());
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to load team activity" });
+  }
+};
+
+export const getInsights = async (req, res) => {
+  try {
+    res.json(await dashboardService.getInsights());
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to load insights" });
+  }
+};

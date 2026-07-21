@@ -1,0 +1,601 @@
+
+> client@0.0.0 lint
+> eslint .
+
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/AIAssistant/AIAssistant.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/App.old.jsx
+  12:1  error  Parsing error: Adjacent JSX elements must be wrapped in an enclosing tag
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/Bugs/BugDialog.jsx
+  41:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  39 |   useEffect(() => {
+  40 |     if (bug) {
+> 41 |       setForm({
+     |       ^^^^^^^ Avoid calling setState() directly within an effect
+  42 |         title: bug.title || "", description: bug.description || "", severity: bug.severity || "Medium", status: bug.status || "Open", projectId: bug.projectId || "", module: bug.module || "General", assigneeId: bug.assigneeId || "", });
+  43 |       if (bug.jiraIssueKey) {
+  44 |         setLoadingJira(true);  react-hooks/set-state-in-effect
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/Bugs/BugTable.jsx
+  2:40  error  'Box' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/CICD/PipelineStatus.jsx
+  6:9  error  'theme' is assigned a value but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/Common/SearchBar.jsx
+  11:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+   9 |
+  10 |   useEffect(() => {
+> 11 |     setValue(initialValue);
+     |     ^^^^^^^^ Avoid calling setState() directly within an effect
+  12 |   }, [initialValue]);
+  13 |
+  14 |   useEffect(() => {  react-hooks/set-state-in-effect
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/Dashboard/Dashboard.jsx
+   5:2  error  'Grid' is not defined  no-undef
+   6:4  error  'Grid' is not defined  no-undef
+  10:4  error  'Grid' is not defined  no-undef
+  14:4  error  'Grid' is not defined  no-undef
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/Dashboard/DashboardGrid.jsx
+   1:8    error  'React' is defined but never used          no-unused-vars
+  19:50   error  'summary' is defined but never used        no-unused-vars
+  19:89   error  'bugSeverity' is defined but never used    no-unused-vars
+  19:102  error  'projectHealth' is defined but never used  no-unused-vars
+  19:141  error  'activity' is defined but never used       no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/Dashboard/DashboardHeader.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/Dashboard/HeroBanner.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/Dashboard/KPICards.jsx
+   1:8  error  'React' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          no-unused-vars
+  16:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  14 |     const end = parseFloat(value);
+  15 |     if (isNaN(end)) {
+> 16 |       setCount(value);
+     |       ^^^^^^^^ Avoid calling setState() directly within an effect
+  17 |       return;
+  18 |     }
+  19 |  react-hooks/set-state-in-effect
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/Dashboard/charts/BuildHistoryChart.jsx
+  1:8   error  'React' is defined but never used  no-unused-vars
+  2:41  error  'Box' is defined but never used    no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/Dashboard/widgets/AIInsights.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/Dashboard/widgets/GithubWidget.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/Dashboard/widgets/JenkinsWidget.jsx
+  1:8  error  'React' is defined but never used          no-unused-vars
+  3:8  error  'BuildIcon' is defined but never used      no-unused-vars
+  6:8  error  'CloudDoneIcon' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/Dashboard/widgets/NotificationPanel.jsx
+  7:8  error  'WarningIcon' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/Dashboard/widgets/QuickActions.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/Dashboard/widgets/RecentRunsWidget.jsx
+  2:106  error  'Box' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/Dashboard/widgets/SprintProgress.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/Dashboard/widgets/TeamActivity.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/GitHub/Charts/ContributorsChart.jsx
+  2:34  error  'useTheme' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/GitHub/Charts/LanguagesPieChart.jsx
+  2:34  error  'useTheme' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/GitHub/LiveLogViewer.jsx
+   1:8   error    'React' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 no-unused-vars
+  34:16  error    'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   no-unused-vars
+  42:7   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  40 |
+  41 |     if (open) {
+> 42 |       setLogs("");
+     |       ^^^^^^^ Avoid calling setState() directly within an effect
+  43 |       fetchLogs();
+  44 |       if (jobStatus === "in_progress" || jobStatus === "queued") {
+  45 |         intervalId = setInterval(fetchLogs, 5000);  react-hooks/set-state-in-effect
+  52:6   warning  React Hook useEffect has a missing dependency: 'logs'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           react-hooks/exhaustive-deps
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/Projects/ProjectDialog.jsx
+  15:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  13 |   useEffect(() => {
+  14 |     if (project) {
+> 15 |       setForm({
+     |       ^^^^^^^ Avoid calling setState() directly within an effect
+  16 |         name: project.name || "", description: project.description || "", });
+  17 |     } else {
+  18 |       setForm({  react-hooks/set-state-in-effect
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/Sidebar/Sidebar.jsx
+  21:8  error  'SupportAgentIcon' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/TestResults/ExecutionLog.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/TestResults/RetryHistory.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/TestResults/ScreenshotViewer.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/TestResults/StatusSummary.jsx
+  1:8   error  'React' is defined but never used    no-unused-vars
+  2:46  error  'Divider' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/TestResults/TestResultDetails.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/TestResults/TestResultSearch.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/TestResults/TestResultTable.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/TestResults/VideoViewer.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/TestRuns/TestRunDialog.jsx
+  31:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  29 |   useEffect(() => {
+  30 |     if (testRun) {
+> 31 |       setForm({
+     |       ^^^^^^^ Avoid calling setState() directly within an effect
+  32 |         projectId: testRun.projectId || "", suiteName: testRun.suiteName || "Default Suite", environment: testRun.environment || "QA", status: testRun.status || "passed", total: String(testRun.total || ""), passed: String(testRun.passed || ""), failed: String(testRun.failed || ""), skipped: String(testRun.skipped || "0"), duration: String(testRun.duration || ""), executionDate: testRun.executionDate?.split("T")[0] || "", });
+  33 |     } else {
+  34 |       setForm({  react-hooks/set-state-in-effect
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/components/TestRuns/TestRunTable.jsx
+  3:40  error  'Box' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/context/AuthContext.jsx
+  65:14  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/context/SnackbarContext.jsx
+  27:14  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/context/SocketContext.jsx
+  14:7   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  12 |     if (isAuthenticated) {
+  13 |       const newSocket = io("http://localhost:5000");
+> 14 |       setSocket(newSocket);
+     |       ^^^^^^^^^ Avoid calling setState() directly within an effect
+  15 |
+  16 |       return () => newSocket.close();
+  17 |     }  react-hooks/set-state-in-effect
+  27:14  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  react-refresh/only-export-components
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/context/ThemeContext.jsx
+  14:7   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  12 |     const savedMode = localStorage.getItem("qa_dash_theme");
+  13 |     if (savedMode) {
+> 14 |       setMode(savedMode);
+     |       ^^^^^^^ Avoid calling setState() directly within an effect
+  15 |     } else {
+  16 |       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  17 |       setMode(prefersDark ? "dark" : "light");  react-hooks/set-state-in-effect
+  91:14  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     react-refresh/only-export-components
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/hooks/useAnalytics.js
+  37:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  35 |
+  36 |   useEffect(() => {
+> 37 |     loadAnalytics();
+     |     ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  38 |   }, [loadAnalytics]);
+  39 |
+  40 |   return {  react-hooks/set-state-in-effect
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/hooks/useJenkins.js
+  28:14  error  'err' is defined but never used  no-unused-vars
+  40:14  error  'err' is defined but never used  no-unused-vars
+  53:14  error  'err' is defined but never used  no-unused-vars
+  62:14  error  'err' is defined but never used  no-unused-vars
+  71:14  error  'err' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/hooks/useProjects.js
+  26:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  24 |
+  25 |   useEffect(() => {
+> 26 |     loadProjects();
+     |     ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  27 |   }, []);
+  28 |
+  29 |   return {  react-hooks/set-state-in-effect
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/hooks/useReports.js
+  83:5  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  81 |
+  82 |   useEffect(() => {
+> 83 |     loadReports();
+     |     ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  84 |   }, [debouncedFilters]);
+  85 |
+  86 |   return {  react-hooks/set-state-in-effect
+  84:6  warning  React Hook useEffect has a missing dependency: 'loadReports'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      react-hooks/exhaustive-deps
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/pages/Admin/DepartmentsTeams.jsx
+   3:20  error    'Paper' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           no-unused-vars
+   3:60  error    'CardActions' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     no-unused-vars
+  29:14  error    'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             no-unused-vars
+  37:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  35 |
+  36 |   useEffect(() => {
+> 37 |     fetchData();
+     |     ^^^^^^^^^ Avoid calling setState() directly within an effect
+  38 |   }, []);
+  39 |
+  40 |   const handleSaveDept = async () => {  react-hooks/set-state-in-effect
+  38:6   warning  React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                react-hooks/exhaustive-deps
+  47:14  error    'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             no-unused-vars
+  59:14  error    'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/pages/Admin/UserManagement.jsx
+   55:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  53 |
+  54 |   useEffect(() => {
+> 55 |     fetchData();
+     |     ^^^^^^^^^ Avoid calling setState() directly within an effect
+  56 |   }, []);
+  57 |
+  58 |   const handleMenuClick = (event, user) => {  react-hooks/set-state-in-effect
+   56:6   warning  React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      react-hooks/exhaustive-deps
+  114:14  error    'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/pages/Analytics.jsx
+   1:10  error  'useState' is defined but never used          no-unused-vars
+   2:52  error  'Chip' is defined but never used              no-unused-vars
+   2:65  error  'LinearProgress' is defined but never used    no-unused-vars
+   3:10  error  'DataGrid' is defined but never used          no-unused-vars
+  11:3   error  'BarChart' is defined but never used          no-unused-vars
+  11:13  error  'Bar' is defined but never used               no-unused-vars
+  11:18  error  'LineChart' is defined but never used         no-unused-vars
+  11:29  error  'Line' is defined but never used              no-unused-vars
+  11:50  error  'XAxis' is defined but never used             no-unused-vars
+  11:57  error  'YAxis' is defined but never used             no-unused-vars
+  11:64  error  'CartesianGrid' is defined but never used     no-unused-vars
+  59:11  error  'heatmap' is assigned a value but never used  no-unused-vars
+  59:20  error  'flaky' is assigned a value but never used    no-unused-vars
+  59:27  error  'trends' is assigned a value but never used   no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/pages/ApiMonitoring.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/pages/AuditLogs.jsx
+  28:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  26 |       fetchLogs();
+  27 |     } else {
+> 28 |       setLoading(false);
+     |       ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  29 |     }
+  30 |   }, [user]);
+  31 |  react-hooks/set-state-in-effect
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/pages/Bugs.jsx
+  3:51  error  'Stack' is defined but never used            no-unused-vars
+  3:58  error  'TablePagination' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/pages/Dashboard.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/pages/GitHub.jsx
+   2:33  error    'CircularProgress' is defined but never used                                                                            no-unused-vars
+  11:8   error    'PRTrendChart' is defined but never used                                                                                no-unused-vars
+  45:6   warning  React Hook useEffect has a missing dependency: 'fetchRepositories'. Either include it or remove the dependency array    react-hooks/exhaustive-deps
+  55:6   warning  React Hook useEffect has a missing dependency: 'fetchRepositoryData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  74:6   warning  React Hook useEffect has a missing dependency: 'fetchRepositoryData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/pages/GitHubActions.jsx
+   48:7   error    Error: Cannot access variable before it is declared
+
+`fetchData` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+  46 |   useEffect(() => {
+  47 |     if (owner && repo) {
+> 48 |       fetchData();
+     |       ^^^^^^^^^ `fetchData` accessed before it is declared
+  49 |       const interval = setInterval(() => {
+  50 |         fetchData(true);
+  51 |       }, 30000);
+
+  54 |   }, [owner, repo]);
+  55 |
+> 56 |   const fetchData = async (isBackground = false) => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 57 |     if (!owner || !repo) return;
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 58 |     if (!isBackground) setLoading(true);
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 79 |     }
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 80 |   };
+     | ^^^^^ `fetchData` is declared here
+  81 |
+  82 |   const fetchRuns = async (workflowId) => {
+  83 |     try {  react-hooks/immutability
+   54:6   warning  React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 react-hooks/exhaustive-deps
+  109:9   error    'confirmRerun' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            no-unused-vars
+  150:14  error    'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              no-unused-vars
+  293:25  error    The value assigned to 'statusLabel' is not used in subsequent statements                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     no-useless-assignment
+  294:25  error    The value assigned to 'chipColor' is not used in subsequent statements                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       no-useless-assignment
+  295:25  error    The value assigned to 'chipIcon' is not used in subsequent statements                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        no-useless-assignment
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/pages/GitHubWorkflowDetails.jsx
+    4:81  error    'IconButton' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      no-unused-vars
+   28:5   error    Error: Cannot access variable before it is declared
+
+`fetchRunDetails` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+  26 |
+  27 |   useEffect(() => {
+> 28 |     fetchRunDetails();
+     |     ^^^^^^^^^^^^^^^ `fetchRunDetails` accessed before it is declared
+  29 |   }, [owner, repo, runId]);
+  30 |
+  31 |   const fetchRunDetails = async () => {
+
+  29 |   }, [owner, repo, runId]);
+  30 |
+> 31 |   const fetchRunDetails = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 32 |     setLoading(true);
+     | ^^^^^^^^^^^^^^^^^^^^^
+> 33 |     try {
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^
+> 44 |     }
+     | ^^^^^^^^^^^^^^^^^^^^^
+> 45 |   };
+     | ^^^^^ `fetchRunDetails` is declared here
+  46 |
+  47 |   const handleDownloadLogs = async () => {
+  48 |     try {  react-hooks/immutability
+   29:6   warning  React Hook useEffect has a missing dependency: 'fetchRunDetails'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          react-hooks/exhaustive-deps
+   57:14  error    'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             no-unused-vars
+  110:7   error    The value assigned to 'statusLabel' is not used in subsequent statements                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    no-useless-assignment
+  111:7   error    The value assigned to 'chipColor' is not used in subsequent statements                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      no-useless-assignment
+  235:51  error    'jColor' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/pages/Integrations.jsx
+  41:5  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  39 |
+  40 |   useEffect(() => {
+> 41 |     fetchIntegrations();
+     |     ^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  42 |   }, []);
+  43 |
+  44 |   const handleOpen = (integration = null) => {  react-hooks/set-state-in-effect
+  42:6  warning  React Hook useEffect has a missing dependency: 'fetchIntegrations'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                react-hooks/exhaustive-deps
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/pages/JiraDashboard.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/pages/Projects.jsx
+  3:47  error  'Paper' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/pages/Reports.jsx
+  1:8  error  'React' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/pages/Settings.jsx
+  124:25  error  'SettingsInputComponentIcon' is not defined  no-undef
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/pages/SprintBoard.jsx
+  1:8  error  'React' is defined but never used            no-unused-vars
+  3:8  error  'CheckCircleIcon' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/pages/Teams.jsx
+   1:8   error  'React' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     no-unused-vars
+   2:78  error  'Avatar' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    no-unused-vars
+  16:5   error  Error: Cannot access variable before it is declared
+
+`fetchTeams` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+  14 |
+  15 |   useEffect(() => {
+> 16 |     fetchTeams();
+     |     ^^^^^^^^^^ `fetchTeams` accessed before it is declared
+  17 |     fetchDepartments();
+  18 |   }, []);
+  19 |
+
+  18 |   }, []);
+  19 |
+> 20 |   const fetchTeams = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 21 |     const res = await fetch('/api/teams', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 22 |     if (res.ok) setTeams(await res.json());
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 23 |   };
+     | ^^^^^ `fetchTeams` is declared here
+  24 |
+  25 |   const fetchDepartments = async () => {
+  26 |     const res = await fetch('/api/teams/departments', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });    react-hooks/immutability
+  17:5   error  Error: Cannot access variable before it is declared
+
+`fetchDepartments` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+  15 |   useEffect(() => {
+  16 |     fetchTeams();
+> 17 |     fetchDepartments();
+     |     ^^^^^^^^^^^^^^^^ `fetchDepartments` accessed before it is declared
+  18 |   }, []);
+  19 |
+  20 |   const fetchTeams = async () => {
+
+  23 |   };
+  24 |
+> 25 |   const fetchDepartments = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 26 |     const res = await fetch('/api/teams/departments', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 27 |     if (res.ok) setDepartments(await res.json());
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 28 |   };
+     | ^^^^^ `fetchDepartments` is declared here
+  29 |
+  30 |   const handleSave = async () => {
+  31 |     await fetch('/api/teams', {  react-hooks/immutability
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/pages/UserProfile.jsx
+  18:19  error    Error: Cannot access variable before it is declared
+
+`fetchProfile` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+  16 |
+  17 |   useEffect(() => {
+> 18 |     if (user?.id) fetchProfile();
+     |                   ^^^^^^^^^^^^ `fetchProfile` accessed before it is declared
+  19 |   }, [user]);
+  20 |
+  21 |   const fetchProfile = async () => {
+
+  19 |   }, [user]);
+  20 |
+> 21 |   const fetchProfile = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 22 |     const res = await fetch(`/api/users/${user.id}/profile`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 23 |     if (res.ok) setProfile(await res.json());
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 24 |   };
+     | ^^^^^ `fetchProfile` is declared here
+  25 |
+  26 |   if (!profile) return <Typography>Loading profile...</Typography>;
+  27 |  react-hooks/immutability
+  19:6   warning  React Hook useEffect has a missing dependency: 'fetchProfile'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      react-hooks/exhaustive-deps
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/src/server.js
+  10:14  error  'process' is not defined  no-undef
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/test-jspdf.js
+  2:8  error  'autoTable' is defined but never used  no-unused-vars
+
+/home/gautam.kochar/mobile-automation-framework/tests/qa-analytics-dashboard/client/test-vite-build.js
+  1:10  error  'build' is defined but never used  no-unused-vars
+
+✖ 130 problems (119 errors, 11 warnings)
+

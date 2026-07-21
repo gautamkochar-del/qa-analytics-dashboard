@@ -13,6 +13,9 @@ model User {
   email     String   @unique
   password     String
   isActive     Boolean  @default(true)
+  avatar       String?
+  skills       String?  // comma-separated list of skills
+  lastLogin    DateTime?
   departmentId Int?
   teamId       Int?
   roleId       Int?
@@ -59,6 +62,7 @@ model TestRun {
   githubRunId     String? // GitHub Actions Run ID
 
   project       Project   @relation(fields: [projectId], references: [id])
+  testCases     TestCaseResult[]
 
   @@index([projectId, status, executionDate])
 }
@@ -199,3 +203,169 @@ model RolePermission {
   @@unique([roleId, permissionId])
 }
 
+model GitHubIntegration {
+  id          Int      @id @default(autoincrement())
+  owner       String
+  repository  String
+  branch      String   @default("main")
+  token       String
+  autoSync    Boolean  @default(true)
+  connectedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model TestCaseResult {
+  id          Int      @id @default(autoincrement())
+
+  testRunId   Int
+
+  name        String
+
+  className   String?
+
+  status      String
+
+  duration    Float
+
+  error       String?
+
+  stackTrace  String?
+
+  screenshot  String?
+
+  video       String?
+
+  logFile     String?
+
+  retries     Int      @default(0)
+
+  createdAt   DateTime @default(now())
+
+  testRun     TestRun @relation(fields: [testRunId], references: [id], onDelete: Cascade)
+
+  @@index([testRunId])
+}
+
+model GitHubWorkflowRun {
+  id            Int      @id @default(autoincrement())
+  githubRunId   String   @unique
+  workflowName  String
+  branch        String
+  commitSha     String
+  commitMessage String?
+  actor         String?
+  status        String
+  conclusion    String?
+  startedAt     DateTime?
+  completedAt   DateTime?
+  duration      Int?
+  htmlUrl       String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model TeamMember {
+  id        Int      @id @default(autoincrement())
+  teamId    Int
+  userId    Int
+  role      String   @default("Member")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TestCase {
+  id               Int      @id @default(autoincrement())
+  title            String
+  expectedResult   String?
+  priority         String   @default("Medium")
+  automationStatus String   @default("Manual")
+  folder           String   @default("General")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  steps            TestStep[]
+}
+
+model TestStep {
+  id             Int      @id @default(autoincrement())
+  testCaseId     Int
+  stepNumber     Int
+  action         String
+  expectedResult String?
+  testCase       TestCase @relation(fields: [testCaseId], references: [id], onDelete: Cascade)
+}
+
+model Sprint {
+  id        Int      @id @default(autoincrement())
+  name      String
+  startDate DateTime
+  endDate   DateTime
+  status    String   @default("Active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Release {
+  id          Int      @id @default(autoincrement())
+  version     String
+  status      String   @default("Planning")
+  releaseDate DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ReleaseProject {
+  id        Int      @id @default(autoincrement())
+  releaseId Int
+  projectId Int
+}
+
+model UserActivity {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  action    String
+  details   String?
+  createdAt DateTime @default(now())
+}
+
+model DashboardLayout {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  layout    String   // JSON string
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LoginHistory {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  ipAddress String?
+  userAgent String?
+  status    String
+  createdAt DateTime @default(now())
+}
+
+model ApiMonitor {
+  id           Int      @id @default(autoincrement())
+  endpoint     String
+  responseTime Int
+  status       String
+  createdAt    DateTime @default(now())
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model WidgetPreference {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  widgetId  String
+  isVisible Boolean  @default(true)
+  settings  String?  // JSON string
+}

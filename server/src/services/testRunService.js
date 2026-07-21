@@ -85,6 +85,7 @@ export const getTestRunById = (id) => {
     },
     include: {
       project: true,
+      testCases: true,
     },
   });
 };

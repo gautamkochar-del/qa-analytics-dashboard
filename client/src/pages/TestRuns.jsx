@@ -138,7 +138,13 @@ export default function TestRuns() {
       </Box>
 
       {/* Filters and Search Bar */}
-      <Paper sx={{ p: 2, mb: 3, borderRadius: 3 }}>
+      <Paper
+  sx={{
+    width: "100%",
+    overflow: "hidden",
+    borderRadius: 3,
+  }}
+>
         <Grid container spacing={2} alignItems="center">
           <Grid size={{xs: 12, sm: 3}}>
             <SearchBar
@@ -215,23 +221,42 @@ export default function TestRuns() {
       )}
 
       {loading ? (
-        <SkeletonTable rows={limit} cols={9} />
-      ) : (
-          <TestRunTable
-            testRuns={testRuns}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            sortBy={sortBy}
-            sortOrder={sortOrder}
-            onSort={handleSort}
-            page={page}
-            limit={limit}
-            total={total}
-            onPageChange={handlePageChange}
-            onLimitChange={handleRowsPerPageChange}
-            loading={loading}
-          />
-      )}
+  <SkeletonTable rows={limit} cols={10} />
+) : (
+  <Paper
+    sx={{
+      width: "100%",
+      borderRadius: 3,
+      overflow: "hidden",
+    }}
+  >
+    <Box
+      sx={{
+        width: "100%",
+        overflowX: "auto",
+      }}
+    >
+      <TestRunTable
+        testRuns={testRuns}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+        onSort={handleSort}
+      />
+    </Box>
+
+    <TablePagination
+      component="div"
+      count={total}
+      page={page - 1}
+      onPageChange={handlePageChange}
+      rowsPerPage={limit}
+      onRowsPerPageChange={handleRowsPerPageChange}
+      rowsPerPageOptions={[5, 10, 25, 50]}
+    />
+  </Paper>
+)}
 
       <TestRunDialog
         open={open}

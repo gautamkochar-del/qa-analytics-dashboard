@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Box, Typography, Tabs, Tab, Paper } from "@mui/material";
 import UserManagement from "./UserManagement";
 import DepartmentsTeams from "./DepartmentsTeams";
+import RolesPermissions from "./RolesPermissions";
 
 export default function AdminPanel() {
   const [tabValue, setTabValue] = useState(0);
@@ -33,11 +34,13 @@ export default function AdminPanel() {
         >
           <Tab label="Users" />
           <Tab label="Departments & Teams" />
+          <Tab label="Roles & Permissions" />
         </Tabs>
       </Paper>
 
       {tabValue === 0 && <UserManagement />}
       {tabValue === 1 && <DepartmentsTeams />}
+      {tabValue === 2 && <RolesPermissions />}
     </Box>
   );
 }

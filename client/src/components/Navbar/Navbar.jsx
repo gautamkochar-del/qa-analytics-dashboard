@@ -1,11 +1,14 @@
+import { AppBar, Toolbar, Typography } from '@mui/material';
+
 const Navbar = () => {
   return (
-    <header
-      style={{
-        background: "#fff", padding: "20px 30px", borderBottom: "1px solid #ddd", }}
-    >
-      <h2>QA Analytics Dashboard</h2>
-    </header>
+    <AppBar position="static" color="transparent" elevation={0} sx={{ borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>
+      <Toolbar sx={{ px: { xs: 2, md: 4 } }}>
+        <Typography variant="h6" component="div" sx={{ fontWeight: 700, color: 'text.primary' }}>
+          QA Analytics Dashboard
+        </Typography>
+      </Toolbar>
+    </AppBar>
   );
 };
 

@@ -6,13 +6,13 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useAuth } from "../../context/AuthContext";
 
 const BugTable = ({
-  bugs = [], onEdit, onDelete, sortBy, sortOrder, onSort, jiraUrl, page, limit, total, onPageChange, onLimitChange, loading }) => {
+  bugs = [], onEdit, onDelete, onPushToJira, sortBy, sortOrder, onSort, jiraUrl, page, limit, total, onPageChange, onLimitChange, loading }) => {
   const { user } = useAuth();
   const canDelete = user?.role === "Admin" || user?.role === "QA Lead";
 
   
   const columns = [
-    { field: "jiraId", headerName: "Jira ID", width: 120, renderCell: (params) => {
+    { field: "jiraIssueKey", headerName: "Jira ID", width: 120, renderCell: (params) => {
       const jiraId = params.value;
       if (jiraId) {
         return (
@@ -21,7 +21,11 @@ const BugTable = ({
             size="small"
             color="primary"
             sx={{ fontWeight: 600, minWidth: 'auto', p: 0 }}
-            onClick={() => window.open(`https://jira.yourcompany.com/browse/${jiraId}`, '_blank')}
+            onClick={(e) => {
+              e.stopPropagation();
+              const url = jiraUrl || "https://jira.atlassian.com";
+              window.open(`${url}/browse/${jiraId}`, '_blank');
+            }}
           >
             {jiraId}
           </Button>
@@ -55,14 +59,28 @@ const BugTable = ({
     { field: "reportedBy", headerName: "Reported By", width: 150, sortable: true, valueGetter: (value) => value || "-" },
     { field: "createdAt", headerName: "Created At", width: 150, sortable: true, valueGetter: (value) => value ? new Date(value).toLocaleDateString() : "-" },
     {
-      field: "actions", headerName: "Actions", width: 120, sortable: false, align: "right", headerAlign: "right",
+      field: "actions", headerName: "Actions", width: 150, sortable: false, align: "right", headerAlign: "right",
       renderCell: (params) => (
         <>
-          <IconButton color="primary" size="small" onClick={() => onEdit(params.row)}>
+          {!params.row.jiraIssueKey && onPushToJira && (
+            <Button
+              size="small"
+              variant="outlined"
+              color="primary"
+              onClick={(e) => {
+                e.stopPropagation();
+                onPushToJira(params.row);
+              }}
+              sx={{ mr: 1, textTransform: "none", py: 0 }}
+            >
+              Jira
+            </Button>
+          )}
+          <IconButton color="primary" size="small" onClick={(e) => { e.stopPropagation(); onEdit(params.row); }}>
             <EditIcon fontSize="small" />
           </IconButton>
           {canDelete && (
-            <IconButton color="error" size="small" sx={{ ml: 1 }} onClick={() => onDelete(params.row)}>
+            <IconButton color="error" size="small" sx={{ ml: 1 }} onClick={(e) => { e.stopPropagation(); onDelete(params.row); }}>
               <DeleteIcon fontSize="small" />
             </IconButton>
           )}
@@ -79,6 +97,12 @@ const BugTable = ({
         columns={columns}
         disableRowSelectionOnClick
         loading={loading}
+        onRowClick={(params) => onEdit(params.row)}
+        sx={{
+          "& .MuiDataGrid-row": {
+            cursor: "pointer",
+          },
+        }}
         rowCount={total}
         pageSizeOptions={[5, 10, 25, 50]}
         paginationMode="server"

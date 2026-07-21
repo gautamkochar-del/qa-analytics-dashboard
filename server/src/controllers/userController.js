@@ -64,6 +64,8 @@ export const updateUser = async (req, res) => {
         roleId: roleId ? Number(roleId) : null,
         departmentId: departmentId ? Number(departmentId) : null,
         teamId: teamId ? Number(teamId) : null,
+        avatar: req.body.avatar !== undefined ? req.body.avatar : undefined,
+        skills: req.body.skills !== undefined ? req.body.skills : undefined,
       },
       include: { role: true, department: true, team: true }
     });
@@ -111,5 +113,44 @@ export const resetUserPassword = async (req, res) => {
     res.json({ message: "Password reset successful" });
   } catch (error) {
     res.status(500).json({ message: "Failed to reset password" });
+  }
+};
+
+// @desc    Get User Profile
+// @route   GET /api/users/:id/profile
+export const getUserProfile = async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: Number(req.params.id) },
+      include: {
+        role: true,
+        department: true,
+        team: true,
+        assignedBugs: {
+          include: { project: true }
+        }
+      },
+    });
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Mocking Assigned Projects and Activity Timeline since they require complex queries
+    const profile = {
+      ...user,
+      assignedProjects: [
+        { id: 1, name: "QA Dashboard", role: "Lead" },
+        { id: 2, name: "Mobile App Automation", role: "Contributor" }
+      ],
+      activityTimeline: [
+        { id: 1, action: "Resolved Bug #482", date: new Date().toISOString() },
+        { id: 2, action: "Triggered Jenkins Build", date: new Date(Date.now() - 86400000).toISOString() },
+      ]
+    };
+
+    const { password, ...safeProfile } = profile;
+    res.json(safeProfile);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to load user profile" });
   }
 };

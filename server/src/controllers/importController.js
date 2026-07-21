@@ -121,15 +121,36 @@ export const importPlaywright = async (req, res) => {
     let skipped = 0;
     let durationMs = 0;
 
+    const parsedTestCases = [];
+
     const parseSuite = (suite) => {
       if (suite.specs) {
         suite.specs.forEach(spec => {
           spec.tests.forEach(test => {
             test.results.forEach(res => {
-              if (res.status === "passed" || res.status === "expected") passed++;
-              else if (res.status === "failed" || res.status === "timedOut" || res.status === "unexpected") failed++;
-              else skipped++;
+              let status = "passed";
+              let errorMsg = null;
+              
+              if (res.status === "passed" || res.status === "expected") {
+                passed++;
+                status = "passed";
+              } else if (res.status === "failed" || res.status === "timedOut" || res.status === "unexpected") {
+                failed++;
+                status = "failed";
+                errorMsg = res.error?.message || res.error?.value || "Test Failed";
+              } else {
+                skipped++;
+                status = "skipped";
+              }
               durationMs += res.duration || 0;
+
+              parsedTestCases.push({
+                name: spec.title || "Unnamed Playwright Test",
+                className: spec.file || null,
+                status: status,
+                duration: parseFloat(((res.duration || 0) / 1000).toFixed(2)),
+                error: errorMsg,
+              });
             });
           });
         });
@@ -153,7 +174,17 @@ export const importPlaywright = async (req, res) => {
       projectId, environment, suiteName, passed, failed, skipped, duration: Math.round(durationMs / 1000)
     });
 
-    res.status(201).json({ message: "Playwright results imported successfully", testRun });
+    if (parsedTestCases.length > 0) {
+      const testCasesToInsert = parsedTestCases.map(tc => ({
+        ...tc,
+        testRunId: testRun.id
+      }));
+      await prisma.testCaseResult.createMany({
+        data: testCasesToInsert
+      });
+    }
+
+    res.status(201).json({ message: "Playwright results imported successfully", testRunId: testRun.id });
   } catch (error) {
     console.error("Playwright import error:", error);
     res.status(500).json({ message: "Failed to parse Playwright report", error: error.message });
@@ -174,6 +205,8 @@ export const importCypress = async (req, res) => {
     let skipped = 0;
     let durationMs = 0;
 
+    const parsedTestCases = [];
+
     if (payload.stats) {
       passed = payload.stats.passes || 0;
       failed = payload.stats.failures || 0;
@@ -181,11 +214,51 @@ export const importCypress = async (req, res) => {
       durationMs = payload.stats.duration || 0;
     }
 
+    if (payload.results) {
+      payload.results.forEach(run => {
+        if (run.suites) {
+          run.suites.forEach(suite => {
+            if (suite.tests) {
+              suite.tests.forEach(test => {
+                let status = "passed";
+                let errorMsg = null;
+                
+                if (test.state === "failed") {
+                  status = "failed";
+                  errorMsg = test.err?.message || test.err?.estack || "Test Failed";
+                } else if (test.state === "pending" || test.state === "skipped") {
+                  status = "skipped";
+                }
+
+                parsedTestCases.push({
+                  name: test.title || "Unnamed Cypress Test",
+                  className: suite.title || run.file || null,
+                  status: status,
+                  duration: parseFloat(((test.duration || 0) / 1000).toFixed(2)),
+                  error: errorMsg,
+                });
+              });
+            }
+          });
+        }
+      });
+    }
+
     const testRun = await createImportedTestRun(req, res, {
       projectId, environment, suiteName, passed, failed, skipped, duration: Math.round(durationMs / 1000)
     });
 
-    res.status(201).json({ message: "Cypress results imported successfully", testRun });
+    if (parsedTestCases.length > 0) {
+      const testCasesToInsert = parsedTestCases.map(tc => ({
+        ...tc,
+        testRunId: testRun.id
+      }));
+      await prisma.testCaseResult.createMany({
+        data: testCasesToInsert
+      });
+    }
+
+    res.status(201).json({ message: "Cypress results imported successfully", testRunId: testRun.id });
   } catch (error) {
     console.error("Cypress import error:", error);
     res.status(500).json({ message: "Failed to parse Cypress report", error: error.message });
@@ -230,11 +303,65 @@ export const importJUnit = async (req, res) => {
        return res.status(400).json({ message: "Could not find root <testsuites> or <testsuite> with metrics in JUnit XML" });
     }
 
+    // Array to hold the individual test case results
+    const parsedTestCases = [];
+
+    // Helper to process a <testsuite> node
+    const processTestSuite = (suite) => {
+      if (suite.testcase) {
+        suite.testcase.forEach(tc => {
+          let status = "passed";
+          let errorMsg = null;
+
+          if (tc.failure) {
+            status = "failed";
+            errorMsg = typeof tc.failure[0] === 'string' ? tc.failure[0] : (tc.failure[0]._ || tc.failure[0].$.message);
+          } else if (tc.error) {
+            status = "failed";
+            errorMsg = typeof tc.error[0] === 'string' ? tc.error[0] : (tc.error[0]._ || tc.error[0].$.message);
+          } else if (tc.skipped) {
+            status = "skipped";
+          }
+
+          parsedTestCases.push({
+            name: tc.$.name || "Unnamed Test",
+            className: tc.$.classname || null,
+            status: status,
+            duration: parseFloat(tc.$.time || "0"),
+            error: errorMsg,
+          });
+        });
+      }
+      // Recursively process nested testsuites if they exist
+      if (suite.testsuite) {
+        suite.testsuite.forEach(processTestSuite);
+      }
+    };
+
+    // Extract test cases
+    if (result.testsuites && result.testsuites.testsuite) {
+      result.testsuites.testsuite.forEach(processTestSuite);
+    } else if (result.testsuite) {
+      // If root is <testsuite> instead of <testsuites>
+      // Wrap it in an array so processTestSuite can handle it
+      [result.testsuite].forEach(processTestSuite);
+    }
+
     const testRun = await createImportedTestRun(req, res, {
       projectId, environment, suiteName, passed, failed, skipped, duration: Math.round(durationSec)
     });
 
-    res.status(201).json({ message: "JUnit results imported successfully", testRun });
+    if (parsedTestCases.length > 0) {
+      const testCasesToInsert = parsedTestCases.map(tc => ({
+        ...tc,
+        testRunId: testRun.id
+      }));
+      await prisma.testCaseResult.createMany({
+        data: testCasesToInsert
+      });
+    }
+
+    res.status(201).json({ message: "JUnit results imported successfully", testRunId: testRun.id, testCasesParsed: parsedTestCases.length });
   } catch (error) {
     console.error("JUnit import error:", error);
     res.status(500).json({ message: "Failed to parse JUnit XML", error: error.message });

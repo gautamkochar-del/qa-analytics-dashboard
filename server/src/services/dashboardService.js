@@ -277,3 +277,43 @@ export const getRecentActivity = async () => {
 
   return activities.slice(0, 10);
 };
+
+/* ============================================
+   Notifications
+============================================ */
+export const getNotifications = async () => {
+  return [
+    { id: 1, type: 'success', text: 'Build #245 Passed', project: 'Platform' },
+    { id: 2, type: 'success', text: '35 Tests Imported', project: 'API' },
+    { id: 3, type: 'warning', text: 'Regression Failed', project: 'Web' },
+    { id: 4, type: 'success', text: 'PR Merged', project: 'Mobile' },
+  ];
+};
+
+/* ============================================
+   Team Activity
+============================================ */
+export const getTeamActivity = async () => {
+  return {
+    todayRuns: 142,
+    todayBugs: 12,
+    activeUsers: 8,
+    reportsGenerated: 24,
+    executedTests: 1264,
+    resolvedBugs: 14,
+    commits: 32,
+    deployments: 5
+  };
+};
+
+/* ============================================
+   AI Insights
+============================================ */
+export const getInsights = async () => {
+  return [
+    { id: 1, text: "Pass Rate improved by 3%", type: 'positive' },
+    { id: 2, text: "Regression Suite has failed 3 consecutive runs", type: 'negative' },
+    { id: 3, text: "Open Bugs reduced by 18%", type: 'positive' },
+    { id: 4, text: "Automation Coverage increased", type: 'positive' },
+  ];
+};
